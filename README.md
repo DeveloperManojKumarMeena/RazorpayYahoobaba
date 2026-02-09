@@ -155,6 +155,7 @@ After payment success:
 
 Frontend sends payment data to server.
 `POST /verify-payment`
+
 ---
 # 🔍 Step 10: Verify Payment (Security Step)
 Server checks if payment is real.
