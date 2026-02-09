@@ -3,9 +3,61 @@ const Razorpay = require('razorpay')
 const path = require('path')
 const {validateWebhookSignature} = require('razorpay/dist/utils/razorpay-utils')
 
-Dotenv.config()
+require ('dotenv').config()
 
 const app = express()
+app.set("view engine" , "ejs")
+app.use(express.json())
+app.use(express.static("public"))
+
+const razorpay = new Razorpay({
+    key_id:process.env.RAZORPAY_KEY_ID,
+    key_secret:process.env.RAZORPAY_KEY_SECRET
+})
+
+app.get("/",(req,res)=>{
+    res.render("index",{key:process.env.RAZORPAY_KEY_ID})
+})
+
+app.post('/create-order', async (req,res)=>{
+    try {
+        const  options ={
+            amount : req.body.amount*100,
+            currency : "INR",
+            receipt : "receipt_" + Date.now()
+        }
+
+        const order = await razorpay.orders.create(options)
+        res.json(order);
+    } catch (error) {
+        res.status(500).send({error:error.message})
+    }
+})
+
+app.post('/verify-payment',(req,res)=>{
+    try {
+        const {razorpay_order_id, razorpay_payment_id,razorpay_signature} = req.body;
+        const secret = process.env.RAZORPAY_KEY_SECRET
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const isValidSignature = validateWebhookSignature(body, razorpay_signature,secret)
+
+        if(isValidSignature){
+                res.status(200).json({status:'ok'})
+            console.log("payment Verification successful")
+        }else{
+            res.status(400).json({status:"verification failed"})
+             console.log("payment verification failed ")
+        }
+
+    } catch (error) {
+        res.status(500).send({error:error.message})
+       
+    }
+})
+
+app.get('/payment-success',(req,res)=>{
+    res.sendFile(path.join(__dirname,'views/success.html'))
+})
 
 const PORT = process.env.PORT|| 3000;
 
