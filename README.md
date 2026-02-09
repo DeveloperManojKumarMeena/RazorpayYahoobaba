@@ -30,20 +30,13 @@ Run this in terminal:
 
 
 <div class="code-container">
-<button onclick="copyCode()">Copy</button>
 
-<pre id="code-block">
+
+<pre >
 npm install express razorpay ejs dotenv nodemo
 </pre>
 </div>
 
-<script>
-function copyCode() {
-  const code = document.getElementById("code-block").innerText;
-  navigator.clipboard.writeText(code);
-  alert("Copied!");
-}
-</script>
 
 
 
