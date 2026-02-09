@@ -32,10 +32,9 @@ Run this in terminal:
 <div class="code-container">
 
 
-<pre >
-npm install express razorpay ejs dotenv nodemo
-</pre>
-</div>
+```js
+npm install express razorpay ejs dotenv nodemon
+```
 
 
 
